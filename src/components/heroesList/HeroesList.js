@@ -1,6 +1,7 @@
 import { useHttp } from '../../hooks/http.hook';
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 import HeroesListItem from '../heroesListItem/HeroesListItem';
 import Spinner from '../spinner/Spinner';
 
@@ -12,23 +13,22 @@ import {
 } from '../../actions';
 
 const HeroesList = () => {
-  const { filteredHeros, heroesLoadingStatus } = useSelector((state) => state);
+  const filteredHeroesSelector = createSelector(
+    (state) => state.filters.activeFilter,
+    (state) => state.heroes.heroes,
+    (filter, heroes) => {
+      if (filter === 'all') {
+        return heroes;
+      } else {
+        return heroes.filter((item) => item.element === filter);
+      }
+    }
+  );
+
+  const filteredHeroes = useSelector(filteredHeroesSelector);
+  const { heroesLoadingStatus } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { request } = useHttp();
-
-  console.log(filteredHeros);
-
-  const onDeleteHero = useCallback(
-    (id) => {
-      request(`http://localhost:3001/heroes/${id}`, 'DELETE')
-        .then((deleteHero) => {
-          console.log('Был удален герой: ' + deleteHero);
-        })
-        .then(dispatch(heroDeleted(id)))
-        .catch(() => dispatch(heroesFetchingError()));
-    },
-    [request]
-  );
 
   useEffect(() => {
     dispatch(heroesFetching());
@@ -39,7 +39,17 @@ const HeroesList = () => {
     // eslint-disable-next-line
   }, []);
 
-  console.log(filteredHeros);
+  const onDeleteHero = useCallback(
+    (id) => {
+      request(`http://localhost:3001/heroes/${id}`, 'DELETE')
+        .then((deleteHero) => {
+          console.log('Был удален герой!');
+        })
+        .then(dispatch(heroDeleted(id)))
+        .catch(() => dispatch(heroesFetchingError()));
+    },
+    [request]
+  );
 
   if (heroesLoadingStatus === 'loading') {
     return <Spinner />;
@@ -59,7 +69,7 @@ const HeroesList = () => {
     });
   };
 
-  const elements = renderHeroesList(filteredHeros);
+  const elements = renderHeroesList(filteredHeroes);
   return <ul>{elements}</ul>;
 };
 

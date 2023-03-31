@@ -4,12 +4,7 @@ import classNames from 'classnames/bind';
 import { useHttp } from '../../hooks/http.hook';
 import Spinner from '../spinner/Spinner';
 
-import {
-  filtersFetching,
-  filtersFetched,
-  filtersFetchingError,
-  activeFiltersChanged,
-} from '../../actions';
+import { fetchFilters, activeFiltersChanged } from '../../actions';
 
 // Задача для этого компонента:
 // Фильтры должны формироваться на основании загруженных данных
@@ -25,11 +20,10 @@ const HeroesFilters = () => {
   const dispatch = useDispatch();
   const { request } = useHttp();
 
+  console.log(fetchFilters(request));
+
   useEffect(() => {
-    dispatch(filtersFetching());
-    request('http://localhost:3001/filters')
-      .then((data) => dispatch(filtersFetched(data)))
-      .catch(() => dispatch(filtersFetchingError()));
+    dispatch(fetchFilters(request));
   }, []);
 
   if (filtersLoadingStatus === 'loading') {
@@ -53,8 +47,6 @@ const HeroesFilters = () => {
       </button>
     );
   });
-
-  console.log(activeFilter);
 
   return (
     <div className='card shadow-lg mt-4'>

@@ -108,7 +108,7 @@ const HeroesAddForm = () => {
           name='element'
         >
           <option value=''>Я владею элементом...</option>
-          {createOptions(filters, filtersLoadingStatus)}
+          {createOptions(filters.filters, filtersLoadingStatus)}
         </select>
       </div>
 

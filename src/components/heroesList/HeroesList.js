@@ -5,12 +5,7 @@ import { createSelector } from 'reselect';
 import HeroesListItem from '../heroesListItem/HeroesListItem';
 import Spinner from '../spinner/Spinner';
 
-import {
-  heroesFetching,
-  heroesFetched,
-  heroesFetchingError,
-  heroDeleted,
-} from '../../actions';
+import { fetchHeroes, heroDeleted } from '../../actions';
 
 const HeroesList = () => {
   const filteredHeroesSelector = createSelector(
@@ -26,27 +21,25 @@ const HeroesList = () => {
   );
 
   const filteredHeroes = useSelector(filteredHeroesSelector);
-  const { heroesLoadingStatus } = useSelector((state) => state);
+  const heroesLoadingStatus = useSelector(
+    (state) => state.heroes.heroesLoadingStatus
+  );
   const dispatch = useDispatch();
   const { request } = useHttp();
 
   useEffect(() => {
-    dispatch(heroesFetching());
-    request('http://localhost:3001/heroes')
-      .then((data) => dispatch(heroesFetched(data)))
-      .catch(() => dispatch(heroesFetchingError()));
-
+    dispatch(fetchHeroes(request));
     // eslint-disable-next-line
   }, []);
 
   const onDeleteHero = useCallback(
     (id) => {
       request(`http://localhost:3001/heroes/${id}`, 'DELETE')
-        .then((deleteHero) => {
+        .then(() => {
           console.log('Был удален герой!');
         })
         .then(dispatch(heroDeleted(id)))
-        .catch(() => dispatch(heroesFetchingError()));
+        .catch((err) => console.log(err));
     },
     [request]
   );

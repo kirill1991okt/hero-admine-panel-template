@@ -4,14 +4,8 @@ import classNames from 'classnames/bind';
 import { useHttp } from '../../hooks/http.hook';
 import Spinner from '../spinner/Spinner';
 
-import { fetchFilters, activeFiltersChanged } from '../../actions';
-
-// Задача для этого компонента:
-// Фильтры должны формироваться на основании загруженных данных
-// Фильтры должны отображать только нужных героев при выборе
-// Активный фильтр имеет класс active
-// Изменять json-файл для удобства МОЖНО!
-// Представьте, что вы попросили бэкенд-разработчика об этом
+import { fetchFilters } from '../../actions';
+import { activeFiltersChanged } from '../heroesFilters/filtersSlice';
 
 const HeroesFilters = () => {
   const { filters, filtersLoadingStatus, activeFilter } = useSelector(
@@ -19,8 +13,6 @@ const HeroesFilters = () => {
   );
   const dispatch = useDispatch();
   const { request } = useHttp();
-
-  console.log(fetchFilters(request));
 
   useEffect(() => {
     dispatch(fetchFilters(request));

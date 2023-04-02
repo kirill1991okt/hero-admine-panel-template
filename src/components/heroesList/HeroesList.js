@@ -5,7 +5,8 @@ import { createSelector } from 'reselect';
 import HeroesListItem from '../heroesListItem/HeroesListItem';
 import Spinner from '../spinner/Spinner';
 
-import { fetchHeroes, heroDeleted } from '../../actions';
+import { fetchHeroes } from '../../actions';
+import { heroDeleted } from '../../components/heroesList/heroesSlice';
 
 const HeroesList = () => {
   const filteredHeroesSelector = createSelector(

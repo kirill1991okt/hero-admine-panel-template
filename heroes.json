@@ -13,10 +13,16 @@
       "element": "earth"
     },
     {
-      "id": "e3d896d4-4e0c-494c-9268-add0066e63d4",
-      "name": "sdfg",
-      "description": "sdfgsdf",
+      "id": "0352238c-9bed-4d3e-a330-c527c22e7163",
+      "name": "Кирилл",
+      "description": "ulyl",
       "element": "water"
+    },
+    {
+      "id": "37d9dc3c-78de-4c76-a3c2-49d5d029861a",
+      "name": "123",
+      "description": "hjkljkl",
+      "element": "fire"
     }
   ],
   "filters": [

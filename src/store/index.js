@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import heroes from '../components/heroesList/heroesSlice';
 import filters from '../components/heroesFilters/filtersSlice';
-import { heroesSliceAll } from '../components/heroesList/heroesSlice';
 
 const stringMiddleware = () => (next) => (action) => {
   if (typeof action === 'string') {
@@ -27,5 +26,4 @@ const store = configureStore({
 //   )
 // );
 
-console.log(heroesSliceAll);
 export default store;

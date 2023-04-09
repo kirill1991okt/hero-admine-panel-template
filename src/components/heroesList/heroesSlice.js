@@ -1,10 +1,17 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+} from '@reduxjs/toolkit';
 import { useHttp } from '../../hooks/http.hook';
 
-const initialState = {
-  heroes: [],
-  heroesLoadingStatus: 'idle',
-};
+// const initialState = {
+//   heroes: [],
+//   heroesLoadingStatus: 'idle',
+// };
+
+const heroesAdapter = createEntityAdapter();
 
 export const fetchHeroes = createAsyncThunk('heroes/fetchHeroes', () => {
   const { request } = useHttp();
@@ -13,13 +20,15 @@ export const fetchHeroes = createAsyncThunk('heroes/fetchHeroes', () => {
 
 const heroesSlice = createSlice({
   name: 'heroes',
-  initialState,
+  initialState: heroesAdapter.getInitialState({
+    heroesLoadingStatus: 'idle',
+  }),
   reducers: {
     heroCreated: (state, action) => {
-      state.heroes.push(action.payload);
+      heroesAdapter.addOne(state, action.payload);
     },
     heroDeleted: (state, action) => {
-      state.heroes.filter((hero) => hero.id !== action.payload);
+      heroesAdapter.removeOne(state, action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -29,7 +38,7 @@ const heroesSlice = createSlice({
       })
       .addCase(fetchHeroes.fulfilled, (state, action) => {
         state.heroesLoadingStatus = 'idle';
-        state.heroes = action.payload;
+        heroesAdapter.setAll(state, action.payload);
       })
       .addCase(fetchHeroes.rejected, (state) => {
         state.heroesLoadingStatus = 'error';
@@ -38,7 +47,19 @@ const heroesSlice = createSlice({
   },
 });
 
-export const { heroCreated, heroDeleted } = heroesSlice.actions;
+const { selectAll } = heroesAdapter.getSelectors((state) => state.heroes);
 
-export const heroesSliceAll = heroesSlice;
+export const filteredHeroesSelector = createSelector(
+  (state) => state.filters.activeFilter,
+  selectAll,
+  (filter, heroes) => {
+    if (filter === 'all') {
+      return heroes;
+    } else {
+      return heroes.filter((item) => item.element === filter);
+    }
+  }
+);
+
+export const { heroCreated, heroDeleted } = heroesSlice.actions;
 export default heroesSlice.reducer;
